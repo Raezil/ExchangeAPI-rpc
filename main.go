@@ -49,28 +49,20 @@ func Request(url string) ([]byte, error) {
 
 func GetLatestRequest(currency string) map[string]interface{} {
 	url := Latest(currency)
-	body, err := Request(url)
-	if err != nil {
-		panic(err)
-	}
-	var jsonMap map[string]interface{}
-	json.Unmarshal([]byte(string(body)), &jsonMap)
-	return jsonMap
+	return ProcessRequest(url)
 }
 
 func GetExchangedRequest(from, to string) map[string]interface{} {
 	url := Exchange(from, to)
-	body, err := Request(url)
-	if err != nil {
-		panic(err)
-	}
-	var jsonMap map[string]interface{}
-	json.Unmarshal([]byte(string(body)), &jsonMap)
-	return jsonMap
+	return ProcessRequest(url)
 }
 
 func GetEnrichedData(from, to string) map[string]interface{} {
 	url := EnrichedData(from, to)
+	return ProcessRequest(url)
+}
+
+func ProcessRequest(url string) map[string]interface{} {
 	body, err := Request(url)
 	if err != nil {
 		panic(err)
@@ -82,13 +74,7 @@ func GetEnrichedData(from, to string) map[string]interface{} {
 
 func GetHistory(currency, year, month, day string) map[string]interface{} {
 	url := History(currency, year, month, day)
-	body, err := Request(url)
-	if err != nil {
-		panic(err)
-	}
-	var jsonMap map[string]interface{}
-	json.Unmarshal([]byte(string(body)), &jsonMap)
-	return jsonMap
+	return ProcessRequest(url)
 }
 
 type CurrencyExchangeArgs struct {
