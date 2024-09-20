@@ -57,7 +57,7 @@ func GetExchangedRequest(from, to string) map[string]interface{} {
 	return ProcessRequest(url)
 }
 
-func GetEnrichedData(from, to string) map[string]interface{} {
+func GetEnrichedDataRequest(from, to string) map[string]interface{} {
 	url := EnrichedData(from, to)
 	return ProcessRequest(url)
 }
@@ -72,7 +72,7 @@ func ProcessRequest(url string) map[string]interface{} {
 	return jsonMap
 }
 
-func GetHistory(currency, year, month, day string) map[string]interface{} {
+func GetHistoryRequest(currency, year, month, day string) map[string]interface{} {
 	url := History(currency, year, month, day)
 	return ProcessRequest(url)
 }
@@ -110,12 +110,12 @@ func (h *CurrencyService) Exchange(r *http.Request, args *CurrencyExchangeArgs, 
 }
 
 func (h *CurrencyService) EnrichedData(r *http.Request, args *CurrencyExchangeArgs, reply *CurrencyReply) error {
-	reply.Message = GetEnrichedData(args.From, args.To)
+	reply.Message = GetEnrichedDataRequest(args.From, args.To)
 	return nil
 }
 
 func (h *CurrencyService) History(r *http.Request, args *CurrencyHistoryArgs, reply *CurrencyReply) error {
-	reply.Message = GetHistory(args.Currency, args.Year, args.Month, args.Day)
+	reply.Message = GetHistoryRequest(args.Currency, args.Year, args.Month, args.Day)
 	return nil
 }
 
