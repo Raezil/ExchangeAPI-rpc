@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -38,43 +39,66 @@ func History(currency, year, month, day string) string {
 func Request(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+	defer resp.Body.Close()
 	return body, err
 }
 
-func GetLatestRequest(currency string) map[string]interface{} {
+func GetLatestRequest(currency string) (map[string]interface{}, error) {
 	url := Latest(currency)
-	return ProcessRequest(url)
+	val, err := ProcessRequest(url)
+	if err != nil {
+		log.Printf("Error in processing request: %v", err)
+		return nil, err
+	}
+	return val, nil
 }
 
-func GetExchangedRequest(from, to string) map[string]interface{} {
+func GetExchangedRequest(from, to string) (map[string]interface{}, error) {
 	url := Exchange(from, to)
-	return ProcessRequest(url)
+	val, err := ProcessRequest(url)
+	if err != nil {
+		log.Printf("Error in processing request: %v", err)
+		return nil, err
+	}
+	return val, nil
 }
 
-func GetEnrichedDataRequest(from, to string) map[string]interface{} {
+func GetEnrichedDataRequest(from, to string) (map[string]interface{}, error) {
 	url := EnrichedData(from, to)
-	return ProcessRequest(url)
+	val, err := ProcessRequest(url)
+	if err != nil {
+		log.Printf("Error in processing request: %v", err)
+		return nil, err
+	}
+	return val, nil
 }
 
-func ProcessRequest(url string) map[string]interface{} {
+func ProcessRequest(url string) (map[string]interface{}, error) {
 	body, err := Request(url)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	var jsonMap map[string]interface{}
-	json.Unmarshal([]byte(string(body)), &jsonMap)
-	return jsonMap
+	if err := json.Unmarshal(body, &jsonMap); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+	return jsonMap, nil
 }
 
-func GetHistoryRequest(currency, year, month, day string) map[string]interface{} {
+func GetHistoryRequest(currency, year, month, day string) (map[string]interface{}, error) {
 	url := History(currency, year, month, day)
-	return ProcessRequest(url)
+	val, err := ProcessRequest(url)
+	if err != nil {
+		log.Printf("Error in processing request: %v", err)
+		return nil, err
+	}
+	return val, nil
 }
 
 type CurrencyExchangeArgs struct {
@@ -100,22 +124,38 @@ type CurrencyReply struct {
 type CurrencyService struct{}
 
 func (h *CurrencyService) Latest(r *http.Request, args *CurrencyExchangeListArgs, reply *CurrencyReply) error {
-	reply.Message = GetLatestRequest(args.Currency)
+	var err error
+	reply.Message, err = GetLatestRequest(args.Currency)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (h *CurrencyService) Exchange(r *http.Request, args *CurrencyExchangeArgs, reply *CurrencyReply) error {
-	reply.Message = GetExchangedRequest(args.From, args.To)
+	var err error
+	reply.Message, err = GetExchangedRequest(args.From, args.To)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (h *CurrencyService) EnrichedData(r *http.Request, args *CurrencyExchangeArgs, reply *CurrencyReply) error {
-	reply.Message = GetEnrichedDataRequest(args.From, args.To)
+	var err error
+	reply.Message, err = GetEnrichedDataRequest(args.From, args.To)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (h *CurrencyService) History(r *http.Request, args *CurrencyHistoryArgs, reply *CurrencyReply) error {
-	reply.Message = GetHistoryRequest(args.Currency, args.Year, args.Month, args.Day)
+	var err error
+	reply.Message, err = GetHistoryRequest(args.Currency, args.Year, args.Month, args.Day)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
