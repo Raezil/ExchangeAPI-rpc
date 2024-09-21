@@ -51,32 +51,17 @@ func Request(url string) ([]byte, error) {
 
 func GetLatestRequest(currency string) (map[string]interface{}, error) {
 	url := Latest(currency)
-	val, err := ProcessRequest(url)
-	if err != nil {
-		log.Printf("Error in processing request: %v", err)
-		return nil, err
-	}
-	return val, nil
+	return ProcessRequest(url)
 }
 
 func GetExchangedRequest(from, to string) (map[string]interface{}, error) {
 	url := Exchange(from, to)
-	val, err := ProcessRequest(url)
-	if err != nil {
-		log.Printf("Error in processing request: %v", err)
-		return nil, err
-	}
-	return val, nil
+	return ProcessRequest(url)
 }
 
 func GetEnrichedDataRequest(from, to string) (map[string]interface{}, error) {
 	url := EnrichedData(from, to)
-	val, err := ProcessRequest(url)
-	if err != nil {
-		log.Printf("Error in processing request: %v", err)
-		return nil, err
-	}
-	return val, nil
+	return ProcessRequest(url)
 }
 
 func ProcessRequest(url string) (map[string]interface{}, error) {
@@ -93,12 +78,7 @@ func ProcessRequest(url string) (map[string]interface{}, error) {
 
 func GetHistoryRequest(currency, year, month, day string) (map[string]interface{}, error) {
 	url := History(currency, year, month, day)
-	val, err := ProcessRequest(url)
-	if err != nil {
-		log.Printf("Error in processing request: %v", err)
-		return nil, err
-	}
-	return val, nil
+	return ProcessRequest(url)
 }
 
 type CurrencyExchangeArgs struct {
