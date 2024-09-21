@@ -26,3 +26,14 @@ Result
 ```
 {"result":{"Message":{"base_code":"USD","conversion_rate":3.8293,"documentation":"https://www.exchangerate-api.com/docs","result":"success","target_code":"PLN","terms_of_use":"https://www.exchangerate-api.com/terms","time_last_update_unix":1726790401,"time_last_update_utc":"Fri, 20 Sep 2024 00:00:01 +0000","time_next_update_unix":1726876801,"time_next_update_utc":"Sat, 21 Sep 2024 00:00:01 +0000"}},"error":null,"id":"1"}
 ```
+
+Build dockerfile
+
+```
+sudo docker build --tag server .
+```
+
+Run docker image
+```
+docker run server
+```
